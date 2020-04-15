@@ -245,9 +245,9 @@ def main(args):
                 if done:
                     print('episode_rew={}'.format(episode_rew))
                     rew_list.append(episode_rew)
-                    actions.append(episode_act.copy())
-                    observations.append(episode_obs.copy())
-                    returns.append(episode_ret.copy())
+                    actions.append(np.array(episode_act))
+                    observations.append(np.array(episode_obs))
+                    returns.append(np.array(episode_ret))
                     episode_rew = 0
                     obs = env.reset()
         avg_rew = sum(rew_list)/len(rew_list)
