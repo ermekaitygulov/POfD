@@ -251,7 +251,7 @@ def main(args):
                     episode_rew = 0
                     obs = env.reset()
         avg_rew = sum(rew_list)/len(rew_list)
-        file = re.split(r'/', args.save_path)
+        file = re.split(r'/', args.load_path)
         file_name = file[0]
         for _ in file[1:-1]:
             file_name += '/' + _
