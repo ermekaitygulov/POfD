@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 
 import tensorflow as tf
@@ -322,6 +323,10 @@ def learn(env,
                     if print_freq is not None:
                         logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                    saved_mean_reward, mean_100ep_reward))
+                    file = re.split(r'/', model_file)
+                    file[-1] = str(mean_100ep_reward) + '_' + file[-1]
+                    file_name = file[0]
+                    for _ in file[1:]: file_name += '/' + _
                     save_variables(model_file)
                     model_saved = True
                     saved_mean_reward = mean_100ep_reward

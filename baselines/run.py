@@ -215,26 +215,42 @@ def main(args):
 
     if args.play:
         logger.log("Running trained model")
+        actions = list()
+        observations = list()
+        returns = list()
+        episode_act = list()
+        episode_obs = list()
+        episode_ret = list()
+        rew_list = list()
         obs = env.reset()
-
         state = model.initial_state if hasattr(model, 'initial_state') else None
         dones = np.zeros((1,))
 
         episode_rew = 0
-        while True:
+        for _ in range(args.play_eps):
             if state is not None:
-                actions, _, state, _ = model.step(obs,S=state, M=dones)
+                action, _, state, _ = model.step(obs, S=state, M=dones)
             else:
-                actions, _, _, _ = model.step(obs)
+                action, _, _, _ = model.step(obs)
+                episode_obs.append(obs)
+                episode_act.append(action)
 
-            obs, rew, done, _ = env.step(actions)
+            obs, rew, done, _ = env.step(action)
+            episode_ret.append(rew)
             episode_rew += rew[0] if isinstance(env, VecEnv) else rew
-            env.render()
+            # env.render()
             done = done.any() if isinstance(done, np.ndarray) else done
             if done:
                 print('episode_rew={}'.format(episode_rew))
+                rew_list.append(episode_rew)
+                actions.append(episode_act.copy())
+                observations.append(episode_obs.copy())
+                returns.append(episode_ret.copy())
                 episode_rew = 0
                 obs = env.reset()
+        avg_rew = sum(rew_list)/len(rew_list)
+        file_name = args.env + '_avgrew_{:.2f}'.format(avg_rew)
+        np.savez(file_name, obs=observations, acs=actions, ep_rets=returns)
 
     env.close()
 
