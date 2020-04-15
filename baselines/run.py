@@ -250,7 +250,11 @@ def main(args):
                 episode_rew = 0
                 obs = env.reset()
         avg_rew = sum(rew_list)/len(rew_list)
-        file_name = args.env + '_avgrew_{:.2f}'.format(avg_rew)
+        file = re.split(r'/', args.save_path)
+        file_name = file[0]
+        for _ in file[1:-1]:
+            file_name += '/' + _
+        file_name = file_name + args.env + '_avgrew_{:.2f}'.format(avg_rew)
         np.savez(file_name, obs=observations, acs=actions, ep_rets=returns)
 
     env.close()
