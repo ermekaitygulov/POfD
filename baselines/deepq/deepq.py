@@ -324,10 +324,11 @@ def learn(env,
                         logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                    saved_mean_reward, mean_100ep_reward))
                     file = re.split(r'/', model_file)
-                    file[-1] = str(mean_100ep_reward) + '_' + file[-1]
+                    file[-1] = '{}'.format(int(mean_100ep_reward)) + '_' + file[-1]
                     file_name = file[0]
-                    for _ in file[1:]: file_name += '/' + _
-                    save_variables(model_file)
+                    for _ in file[1:]:
+                        file_name += '/' + _
+                    save_variables(file_name)
                     model_saved = True
                     saved_mean_reward = mean_100ep_reward
         if model_saved:
