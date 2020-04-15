@@ -226,7 +226,7 @@ def main(args):
         obs = env.reset()
         state = model.initial_state if hasattr(model, 'initial_state') else None
         dones = np.zeros((1,))
-
+        done = False
         episode_rew = 0
         for _ in range(args.play_eps):
             while not done:
