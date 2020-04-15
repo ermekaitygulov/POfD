@@ -77,6 +77,7 @@ def train(args, extra_args):
         env=env,
         seed=seed,
         total_timesteps=total_timesteps,
+        checkpoint_path=args.save_path,
         **alg_kwargs
     )
 
