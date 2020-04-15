@@ -328,7 +328,8 @@ def learn(env,
                     file_name = file[0]
                     for _ in file[1:]:
                         file_name += '/' + _
-                    save_variables(file_name)
+                    save_variables(model_file)
+                    act.save_act(file_name)
                     model_saved = True
                     saved_mean_reward = mean_100ep_reward
         if model_saved:
@@ -339,6 +340,6 @@ def learn(env,
             file_name = file[0]
             for _ in file[1:]:
                 file_name += '/' + _
-            load_variables(file_name)
+            load_variables(model_file)
 
     return act
