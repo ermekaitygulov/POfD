@@ -229,26 +229,27 @@ def main(args):
 
         episode_rew = 0
         for _ in range(args.play_eps):
-            if state is not None:
-                action, _, state, _ = model.step(obs, S=state, M=dones)
-            else:
-                action, _, _, _ = model.step(obs)
-                episode_obs.append(obs)
-                episode_act.append(action)
+            while not done:
+                if state is not None:
+                    action, _, state, _ = model.step(obs, S=state, M=dones)
+                else:
+                    action, _, _, _ = model.step(obs)
+                    episode_obs.append(obs)
+                    episode_act.append(action)
 
-            obs, rew, done, _ = env.step(action)
-            episode_ret.append(rew)
-            episode_rew += rew[0] if isinstance(env, VecEnv) else rew
-            # env.render()
-            done = done.any() if isinstance(done, np.ndarray) else done
-            if done:
-                print('episode_rew={}'.format(episode_rew))
-                rew_list.append(episode_rew)
-                actions.append(episode_act.copy())
-                observations.append(episode_obs.copy())
-                returns.append(episode_ret.copy())
-                episode_rew = 0
-                obs = env.reset()
+                obs, rew, done, _ = env.step(action)
+                episode_ret.append(rew)
+                episode_rew += rew[0] if isinstance(env, VecEnv) else rew
+                # env.render()
+                done = done.any() if isinstance(done, np.ndarray) else done
+                if done:
+                    print('episode_rew={}'.format(episode_rew))
+                    rew_list.append(episode_rew)
+                    actions.append(episode_act.copy())
+                    observations.append(episode_obs.copy())
+                    returns.append(episode_ret.copy())
+                    episode_rew = 0
+                    obs = env.reset()
         avg_rew = sum(rew_list)/len(rew_list)
         file = re.split(r'/', args.save_path)
         file_name = file[0]
