@@ -339,6 +339,6 @@ def learn(env,
             file_name = file[0]
             for _ in file[1:]:
                 file_name += '/' + _
-            load_variables(model_file)
+            load_variables(file_name)
 
     return act
