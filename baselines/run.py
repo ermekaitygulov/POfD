@@ -226,9 +226,9 @@ def main(args):
         obs = env.reset()
         state = model.initial_state if hasattr(model, 'initial_state') else None
         dones = np.zeros((1,))
-        done = False
         episode_rew = 0
         for _ in range(args.play_eps):
+            done = False
             while not done:
                 if state is not None:
                     action, _, state, _ = model.step(obs, S=state, M=dones)
