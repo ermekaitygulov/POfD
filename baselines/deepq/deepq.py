@@ -117,6 +117,7 @@ def learn(env,
           param_noise=False,
           callback=None,
           load_path=None,
+          save_path=None,
           **network_kwargs
             ):
     """Train a deepq model.
@@ -323,7 +324,7 @@ def learn(env,
                     if print_freq is not None:
                         logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                    saved_mean_reward, mean_100ep_reward))
-                    file = re.split(r'/', model_file)
+                    file = re.split(r'/', save_path)
                     file[-1] = '{}'.format(int(mean_100ep_reward)) + '_' + file[-1]
                     file_name = file[0]
                     for _ in file[1:]:
@@ -335,11 +336,6 @@ def learn(env,
         if model_saved:
             if print_freq is not None:
                 logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
-            file = re.split(r'/', model_file)
-            file[-1] = '{}'.format(int(saved_mean_reward)) + '_' + file[-1]
-            file_name = file[0]
-            for _ in file[1:]:
-                file_name += '/' + _
             load_variables(model_file)
 
     return act
