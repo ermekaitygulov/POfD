@@ -157,7 +157,6 @@ def traj_segment_generator(pi, env, reward_giver, reward_coeff, horizon, stochas
         news[i] = new
         acs[i] = ac
         prevacs[i] = prevac
-        rew = reward_giver.get_reward(ob, ac)
         ob, true_rew, new, _ = env.step(ac)
         assert reward_coeff <= 1
         rew = reward_coeff * reward_giver.get_reward(ob, ac) + (1 - reward_coeff) * true_rew
