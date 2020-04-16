@@ -11,7 +11,7 @@ from tqdm import tqdm
 import numpy as np
 import gym
 from baselines.run import get_env_type
-from baselines.common.cmd_util import make_env
+from baselines.common.cmd_util import make_env, make_vec_env
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
@@ -83,7 +83,7 @@ def main(args):
     env_type, env_id = get_env_type(args)
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
                             "seed_" + str(args.seed))
-    env = make_env(env_id, env_type, seed=args.seed, logger_dir=args.log_dir)
+    env = make_vec_env(env_id, env_type, 1, args.seed, log_dir=args.log_dir)
     # delay training env
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
     eval_env = gym.make(env_id)
