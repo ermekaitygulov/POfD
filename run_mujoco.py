@@ -12,8 +12,6 @@ import numpy as np
 import gym
 
 from baselines.bench import Monitor
-from baselines.run import get_env_type
-from baselines.common.cmd_util import make_env, make_vec_env
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
@@ -82,15 +80,14 @@ def get_task_name(args):
 def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
-    env_type, env_id = get_env_type(args)
-    env = gym.make(env_id)
+    env = gym.make(args.env)
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
     # delay training env
     env = Monitor(env, args.log_dir, allow_early_resets=True)
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
-    eval_env = gym.make(env_id)
+    eval_env = gym.make(args.env)
 
     def policy_fn(name, ob_space, ac_space, reuse=False):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
