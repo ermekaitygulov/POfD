@@ -81,7 +81,7 @@ def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
     env = gym.make(args.env)
-    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
+    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env,
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
     # delay training env
