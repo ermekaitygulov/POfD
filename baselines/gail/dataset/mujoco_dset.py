@@ -113,6 +113,8 @@ class Cartpole_Dset(object):
         self.acs = np.vstack(acs)
 
         self.rets = traj_data['ep_rets'][:traj_limitation]
+        self.rets = np.vstack(self.rets)
+        self.rets = np.squeeze(self.rets)
         self.avg_ret = sum(self.rets)/len(self.rets)
         self.std_ret = np.std(np.array(self.rets))
         if len(self.acs) > 2:

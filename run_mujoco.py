@@ -15,7 +15,7 @@ from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
 from baselines import logger
-from baselines.gail.dataset.mujoco_dset import Mujoco_Dset
+from baselines.gail.dataset.mujoco_dset import Cartpole_Dset
 from baselines.gail.adversary import TransitionClassifier
 from baselines.gail.delay_env_wrapper import DelayRewardWrapper
 
@@ -93,7 +93,7 @@ def main(args):
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env_id, "seed_" + str(args.seed))
 
     if args.task == 'train':
-        dataset = Mujoco_Dset(expert_path=args.expert_path, traj_limitation=args.traj_limitation)
+        dataset = Cartpole_Dset(expert_path=args.expert_path, traj_limitation=args.traj_limitation)
         reward_giver = TransitionClassifier(env, args.adversary_hidden_size, entcoeff=args.adversary_entcoeff)
         train(env,
               eval_env,

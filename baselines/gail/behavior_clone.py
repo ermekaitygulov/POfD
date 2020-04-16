@@ -17,7 +17,7 @@ from baselines import logger
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
 from baselines.common.mpi_adam import MpiAdam
-from baselines.gail.run_mujoco import runner
+from run_mujoco import runner
 from baselines.gail.dataset.mujoco_dset import Mujoco_Dset
 
 

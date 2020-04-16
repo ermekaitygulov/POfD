@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
-from baselines.gail import run_mujoco
+import run_mujoco
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
