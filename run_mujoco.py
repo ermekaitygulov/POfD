@@ -83,6 +83,7 @@ def main(args):
     env_type, env_id = get_env_type(args)
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
                             "seed_" + str(args.seed))
+    logger.configure(dir=args.log_dir)
     env = make_vec_env(env_id, env_type, 1, args.seed, log_dir=args.log_dir)
     # delay training env
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
@@ -116,7 +117,6 @@ def main(args):
               args.num_timesteps,
               args.save_per_iter,
               args.checkpoint_dir,
-              args.log_dir,
               args.pretrained,
               args.BC_max_iter,
               args.num_epochs,
