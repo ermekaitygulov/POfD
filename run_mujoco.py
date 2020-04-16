@@ -70,7 +70,7 @@ def get_task_name(args):
         task_name += "with_pretrained."
     if args.traj_limitation != np.inf:
         task_name += "transition_limitation_%d." % args.traj_limitation
-    task_name += args.env_id.split("-")[0]
+    task_name += args.env.split("-")[0]
     task_name = task_name + ".g_step_" + str(args.g_step) + ".d_step_" + str(args.d_step) + \
         ".policy_entcoeff_" + str(args.policy_entcoeff) + ".adversary_entcoeff_" + str(args.adversary_entcoeff)
     task_name += ".seed_" + str(args.seed)
@@ -81,12 +81,12 @@ def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
     env_type, env_id = get_env_type(args)
-    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env_id,
+    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
                             "seed_" + str(args.seed))
     env = make_env(env_id, env_type, seed=args.seed, logger_dir=args.log_dir)
     # delay training env
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
-    eval_env = gym.make(args.env_id)
+    eval_env = gym.make(env_id)
 
     def policy_fn(name, ob_space, ac_space, reuse=False):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
