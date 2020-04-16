@@ -148,8 +148,6 @@ def train(env, eval_env, seed, policy_fn, reward_giver, dataset, algo,
         rank = MPI.COMM_WORLD.Get_rank()
         if rank != 0:
             logger.set_level(logger.DISABLED)
-        else:
-            logger.configure()
         workerseed = seed + 10000 * MPI.COMM_WORLD.Get_rank()
         set_global_seeds(workerseed)
         env.seed(workerseed)
