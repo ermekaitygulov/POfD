@@ -21,12 +21,11 @@ from baselines.gail.statistics import stats
 
 
 def rollout(pi, reward_giver, eval_env, stochastic=False, path_length=1000, render=False, speedup=None):
-    Da = eval_env.action_space.shape[0]
     Do = eval_env.observation_space.shape[0]
 
     observation = eval_env.reset()
     observations = np.zeros((path_length + 1, Do))
-    actions = np.zeros((path_length, Da))
+    actions = np.zeros((path_length, ))
     terminals = np.zeros((path_length, ))
     rewards = np.zeros((path_length, ))
     discriminator_rewards = np.zeros((path_length,))
