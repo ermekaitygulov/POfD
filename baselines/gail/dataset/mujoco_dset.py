@@ -11,6 +11,8 @@ import numpy as np
 
 class Dset(object):
     def __init__(self, inputs, labels, randomize):
+        print(inputs.shape)
+        print(labels.shape)
         self.inputs = inputs
         self.labels = labels
         assert len(self.inputs) == len(self.labels)
