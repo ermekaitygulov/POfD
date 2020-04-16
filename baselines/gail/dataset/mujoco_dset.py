@@ -11,8 +11,6 @@ import numpy as np
 
 class Dset(object):
     def __init__(self, inputs, labels, randomize):
-        print(inputs.shape)
-        print(labels.shape)
         self.inputs = inputs
         self.labels = labels
         assert len(self.inputs) == len(self.labels)
@@ -119,8 +117,6 @@ class Cartpole_Dset(object):
         self.rets = np.squeeze(self.rets)
         self.avg_ret = sum(self.rets)/len(self.rets)
         self.std_ret = np.std(np.array(self.rets))
-        if len(self.acs) > 2:
-            self.acs = np.squeeze(self.acs)
         assert len(self.obs) == len(self.acs)
         self.num_traj = min(traj_limitation, len(traj_data['obs']))
         self.num_transition = len(self.obs)
