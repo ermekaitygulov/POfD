@@ -86,7 +86,7 @@ def main(args):
     logger.configure(dir=args.log_dir)
     env = make_vec_env(env_id, env_type, 1, args.seed, log_dir=args.log_dir)
     # delay training env
-    env = DelayRewardWrapper(env, args.reward_freq, 1000)
+    # env = DelayRewardWrapper(env, args.reward_freq, 1000)
     eval_env = gym.make(env_id)
 
     def policy_fn(name, ob_space, ac_space, reuse=False):
