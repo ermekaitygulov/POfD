@@ -21,9 +21,9 @@ class TransitionClassifier(object):
     def __init__(self, env, hidden_size, entcoeff=0.001, lr_rate=1e-3, scope="adversary"):
         self.scope = scope
         self.observation_shape = env.observation_space.shape
-        self.actions_shape = env.action_space.shape
-        self.input_shape = tuple([o+a for o, a in zip(self.observation_shape, self.actions_shape)])
-        self.num_actions = env.action_space.shape[0]
+        self.actions_shape = (1,)
+        # self.input_shape = tuple([o+a for o, a in zip(self.observation_shape, self.actions_shape)])
+        self.num_actions = env.action_space.n
         self.hidden_size = hidden_size
         self.build_ph()
         # Build grpah
