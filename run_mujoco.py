@@ -84,16 +84,15 @@ def main(args):
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), env_id,
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
-    env = make_vec_env(env_id, env_type, 1, args.seed, log_dir=args.log_dir)
+    env = make_env(env_id, env_type, seed=args.seed, logger_dir=args.log_dir)
     # delay training env
-    # env = DelayRewardWrapper(env, args.reward_freq, 1000)
+    env = DelayRewardWrapper(env, args.reward_freq, 1000)
     eval_env = gym.make(env_id)
 
     def policy_fn(name, ob_space, ac_space, reuse=False):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
                                     reuse=reuse, hid_size=args.policy_hidden_size, num_hid_layers=2)
 
-    env.seed(args.seed)
     eval_env.seed(args.seed)
     gym.logger.setLevel(logging.WARN)
     task_name = get_task_name(args)
