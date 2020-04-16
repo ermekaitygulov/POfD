@@ -101,15 +101,16 @@ class Mujoco_Dset(object):
 
 class Cartpole_Dset(object):
     def __init__(self, expert_path, train_fraction=0.7, traj_limitation=-1, randomize=True):
-        traj_data = np.load(expert_path)
+        traj_data = np.load(expert_path, allow_pickle=True)
         if traj_limitation < 0:
             traj_limitation = len(traj_data['obs'])
         obs = traj_data['obs'][:traj_limitation]
         acs = traj_data['acs'][:traj_limitation]
 
         # Flatten to (N * L, prod(S))
-        self.obs = np.hstack(obs)
-        self.acs = np.hstack(acs)
+        self.obs = np.vstack(obs)
+        self.obs = np.squeeze(self.obs)
+        self.acs = np.vstack(acs)
 
         self.rets = traj_data['ep_rets'][:traj_limitation]
         self.avg_ret = sum(self.rets)/len(self.rets)
