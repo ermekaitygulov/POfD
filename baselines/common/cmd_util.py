@@ -27,7 +27,8 @@ def make_vec_env(env_id, env_type, num_env, seed,
                  flatten_dict_observations=True,
                  gamestate=None,
                  initializer=None,
-                 force_dummy=False):
+                 force_dummy=False,
+                 log_dir=None):
     """
     Create a wrapped, monitored SubprocVecEnv for Atari and MuJoCo.
     """
@@ -35,7 +36,7 @@ def make_vec_env(env_id, env_type, num_env, seed,
     env_kwargs = env_kwargs or {}
     mpi_rank = MPI.COMM_WORLD.Get_rank() if MPI else 0
     seed = seed + 10000 * mpi_rank if seed is not None else None
-    logger_dir = logger.get_dir()
+    logger_dir = log_dir or logger.get_dir()
     def make_thunk(rank, initializer=None):
         return lambda: make_env(
             env_id=env_id,
