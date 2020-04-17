@@ -11,7 +11,6 @@ from tqdm import tqdm
 import numpy as np
 import gym
 
-from baselines.bench import Monitor
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
