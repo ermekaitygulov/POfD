@@ -15,6 +15,7 @@ from baselines.bench import Monitor
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
+from baselines.bench.monitor import Monitor
 from baselines import logger
 from baselines.gail.dataset.mujoco_dset import Cartpole_Dset
 from baselines.gail.adversary import TransitionClassifier
@@ -85,6 +86,9 @@ def main(args):
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
     # delay training env
+    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env_id,
+                            "seed_" + str(args.seed))
+
     env = Monitor(env, args.log_dir, allow_early_resets=True)
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
     eval_env = gym.make(args.env)
