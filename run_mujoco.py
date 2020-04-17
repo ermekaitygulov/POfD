@@ -86,9 +86,6 @@ def main(args):
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
     # delay training env
-    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env_id,
-                            "seed_" + str(args.seed))
-
     env = Monitor(env, args.log_dir, allow_early_resets=True)
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
     eval_env = gym.make(args.env)
