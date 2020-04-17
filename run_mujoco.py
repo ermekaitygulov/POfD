@@ -259,7 +259,9 @@ def traj_1_generator(pi, env, horizon, stochastic):
 if __name__ == '__main__':
     args = argsparser()
     args.num_epochs = int(args.num_epochs)
-    group = 'pofd_' + args.expert_path
+    data_file = args.expert_path.split("/")[-1]
+    data_name = data_file.split(".")[0]
+    group = 'pofd_' + data_name
     wandb.init(anonymous='allow', project="FSRB", group=group)
     wandb.config.seed = args.seed
     wandb.config.reward_coeff = args.reward_coeff
