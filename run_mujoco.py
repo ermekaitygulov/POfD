@@ -140,7 +140,7 @@ def main(args):
 
 def train(env, eval_env, seed, policy_fn, reward_giver, dataset, algo,
           g_step, d_step, policy_entcoeff, reward_coeff, num_timesteps, save_per_iter,
-          checkpoint_dir, log_dir, pretrained, BC_max_iter, num_epochs, eval_interval, timesteps_per_batch, task_name=None):
+          checkpoint_dir, pretrained, BC_max_iter, num_epochs, eval_interval, timesteps_per_batch, task_name=None):
 
     pretrained_weight = None
     if pretrained and (BC_max_iter > 0):
@@ -164,7 +164,7 @@ def train(env, eval_env, seed, policy_fn, reward_giver, dataset, algo,
                        entcoeff=policy_entcoeff,
                        reward_coeff=reward_coeff,
                        max_timesteps=num_timesteps,
-                       ckpt_dir=checkpoint_dir, log_dir=log_dir,
+                       ckpt_dir=checkpoint_dir,
                        save_per_iter=save_per_iter,
                        timesteps_per_batch=timesteps_per_batch,
                        max_kl=0.01, cg_iters=10, cg_damping=0.1,
