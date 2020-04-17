@@ -193,7 +193,7 @@ def add_vtarg_and_adv(seg, gamma, lam):
 def learn(env, eval_env, policy_func, reward_giver, expert_dataset, rank,
           pretrained, pretrained_weight, *,
           g_step, d_step, entcoeff, reward_coeff, save_per_iter,
-          ckpt_dir, log_dir, timesteps_per_batch, task_name,
+          ckpt_dir,  timesteps_per_batch, task_name,
           gamma, lam,
           max_kl, cg_iters, cg_damping=1e-2,
           vf_stepsize=3e-4, d_stepsize=3e-4, vf_iters=3,
@@ -202,7 +202,6 @@ def learn(env, eval_env, policy_func, reward_giver, expert_dataset, rank,
           ):
 
     # Configure log
-    logger.configure(dir=log_dir)
 
     nworkers = MPI.COMM_WORLD.Get_size()
     rank = MPI.COMM_WORLD.Get_rank()

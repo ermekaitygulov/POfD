@@ -11,6 +11,7 @@ from tqdm import tqdm
 import numpy as np
 import gym
 
+from baselines.bench import Monitor
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
@@ -22,7 +23,10 @@ from baselines.gail.delay_env_wrapper import DelayRewardWrapper
 
 def argsparser():
     parser = argparse.ArgumentParser("Tensorflow Implementation of POfD")
-    parser.add_argument('--env_id', help='environment ID', default='Hopper-v1')
+    parser.add_argument('--env', help='environment ID', default='Hopper-v1')
+    parser.add_argument('--env_type',
+                        help='type of environment, used when the environment type cannot be automatically determined',
+                        type=str)
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
     parser.add_argument('--expert_path', type=str, default='dataset/hopper.npz')
     parser.add_argument('--checkpoint_dir', help='the directory to save model', default='checkpoint')
@@ -67,7 +71,7 @@ def get_task_name(args):
         task_name += "with_pretrained."
     if args.traj_limitation != np.inf:
         task_name += "transition_limitation_%d." % args.traj_limitation
-    task_name += args.env_id.split("-")[0]
+    task_name += args.env.split("-")[0]
     task_name = task_name + ".g_step_" + str(args.g_step) + ".d_step_" + str(args.d_step) + \
         ".policy_entcoeff_" + str(args.policy_entcoeff) + ".adversary_entcoeff_" + str(args.adversary_entcoeff)
     task_name += ".seed_" + str(args.seed)
@@ -77,19 +81,22 @@ def get_task_name(args):
 def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
-    env = gym.make(args.env_id)
+    env = gym.make(args.env)
+    args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env,
+                            "seed_" + str(args.seed))
+    logger.configure(dir=args.log_dir)
     # delay training env
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env_id,
                             "seed_" + str(args.seed))
+
     env = Monitor(env, args.log_dir, allow_early_resets=True)
     env = DelayRewardWrapper(env, args.reward_freq, 1000)
-    eval_env = gym.make(args.env_id)
+    eval_env = gym.make(args.env)
 
     def policy_fn(name, ob_space, ac_space, reuse=False):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
                                     reuse=reuse, hid_size=args.policy_hidden_size, num_hid_layers=2)
 
-    env.seed(args.seed)
     eval_env.seed(args.seed)
     gym.logger.setLevel(logging.WARN)
     task_name = get_task_name(args)
@@ -113,7 +120,6 @@ def main(args):
               args.num_timesteps,
               args.save_per_iter,
               args.checkpoint_dir,
-              args.log_dir,
               args.pretrained,
               args.BC_max_iter,
               args.num_epochs,
