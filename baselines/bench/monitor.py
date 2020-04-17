@@ -8,6 +8,7 @@ import csv
 import os.path as osp
 import json
 import numpy as np
+import wandb
 
 class Monitor(Wrapper):
     EXT = "monitor.csv"
@@ -64,6 +65,7 @@ class Monitor(Wrapper):
             eprew = sum(self.rewards)
             eplen = len(self.rewards)
             epinfo = {"r": round(eprew, 6), "l": eplen, "t": round(time.time() - self.tstart, 6)}
+            wandb.log({"reward": round(eprew, 6), "episode": len(self.episode_rewards)})
             for k in self.info_keywords:
                 epinfo[k] = info[k]
             self.episode_rewards.append(eprew)

@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 import numpy as np
 import gym
-
+import wandb
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
@@ -259,4 +259,9 @@ def traj_1_generator(pi, env, horizon, stochastic):
 if __name__ == '__main__':
     args = argsparser()
     args.num_epochs = int(args.num_epochs)
+    wandb.init(anonymous='allow', project="FSRB", group='pofd')
+    wandb.config.env = args.env
+    wandb.config.seed = args.seed
+    wandb.config.reward_coeff = args.reward_coeff
+    wandb.config.expert_path = args.expert_path
     main(args)
