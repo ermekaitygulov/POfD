@@ -216,47 +216,41 @@ def main(args):
 
     if args.play:
         logger.log("Running trained model")
-        actions = list()
-        observations = list()
-        returns = list()
-        episode_act = list()
-        episode_obs = list()
-        episode_ret = list()
-        rew_list = list()
+        actions, episode_act = list(), list()
+        observations, episode_obs = list(), list()
+        returns, episode_ret = list(), list()
+        dones, episode_done = list(), list()
+        scores = list()
         obs = env.reset()
-        state = model.initial_state if hasattr(model, 'initial_state') else None
-        dones = np.zeros((1,))
-        episode_rew = 0
+        score = 0
         for _ in range(args.play_eps):
             done = False
             while not done:
-                if state is not None:
-                    action, _, state, _ = model.step(obs, S=state, M=dones)
-                else:
-                    action, _, _, _ = model.step(obs)
-                    episode_obs.append(obs)
-                    episode_act.append(action)
+                action, _, _, _ = model.step(obs)
+                episode_obs.append(obs)
+                episode_act.append(action)
 
                 obs, rew, done, _ = env.step(action)
                 episode_ret.append(rew)
-                episode_rew += rew[0] if isinstance(env, VecEnv) else rew
-                # env.render()
+                episode_done.append(done)
+                score += rew[0] if isinstance(env, VecEnv) else rew
                 done = done.any() if isinstance(done, np.ndarray) else done
                 if done:
-                    print('episode_rew={}'.format(episode_rew))
-                    rew_list.append(episode_rew)
+                    print('episode_rew={}'.format(score))
+                    scores.append(score)
                     actions.append(np.array(episode_act))
                     observations.append(np.array(episode_obs))
                     returns.append(np.array(episode_ret))
-                    episode_rew = 0
+                    dones.append(np.array(episode_done))
+                    score = 0
                     obs = env.reset()
-        avg_rew = sum(rew_list)/len(rew_list)
+        avg_rew = sum(scores)/len(scores)
         file = re.split(r'/', extra_args['load_path'])
         file_name = file[0]
         for _ in file[1:-1]:
             file_name += '/' + _
-        file_name = file_name + '/' + args.env + '_avgrew_{:.2f}'.format(avg_rew)
-        np.savez(file_name, obs=observations, acs=actions, ep_rets=returns)
+        file_name = file_name + '/' + args.env + '_{:.0f}'.format(avg_rew)
+        np.savez(file_name, obs=observations, acs=actions, rew=returns, done=dones)
 
     env.close()
 
