@@ -33,8 +33,7 @@ class Monitor(Wrapper):
         self.episode_lengths = []
         self.episode_times = []
         self.total_steps = 0
-        self.current_reset_info = {}
-        self.wandb_log = True# extra info about the current episode, that was passed in during reset()
+        self.current_reset_info = {}# extra info about the current episode, that was passed in during reset()
 
     def reset(self, **kwargs):
         self.reset_state()
@@ -66,8 +65,10 @@ class Monitor(Wrapper):
             eprew = sum(self.rewards)
             eplen = len(self.rewards)
             epinfo = {"r": round(eprew, 6), "l": eplen, "t": round(time.time() - self.tstart, 6)}
-            if self.wandb_log:
+            try:
                 wandb.log({"reward": round(eprew, 6), "episode": len(self.episode_rewards)})
+            except ValueError:
+                pass
             for k in self.info_keywords:
                 epinfo[k] = info[k]
             self.episode_rewards.append(eprew)

@@ -216,7 +216,6 @@ def main(args):
 
     if args.play:
         logger.log("Running trained model")
-        env.wandb_log = False
         actions, episode_act = list(), list()
         observations, episode_obs = list(), list()
         returns, episode_ret = list(), list()
