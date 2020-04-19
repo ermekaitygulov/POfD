@@ -1,6 +1,9 @@
+import re
+
 from baselines.common import explained_variance, zipsame, dataset
 from baselines import logger
 import baselines.common.tf_util as U
+from baselines.common.tf_util import load_variables, save_variables
 import tensorflow as tf, numpy as np
 import time
 from baselines.common import colorize
@@ -103,6 +106,7 @@ def learn(*,
         max_episodes=0, max_iters=0,  # time constraint
         callback=None,
         load_path=None,
+        save_path=None,
         **network_kwargs
         ):
     '''
@@ -173,7 +177,7 @@ def learn(*,
     # ----------------------------------------
     ob_space = env.observation_space
     ac_space = env.action_space
-
+    max_mean_ret = None
     ob = observation_placeholder(ob_space)
     with tf.variable_scope("pi"):
         pi = policy(observ_placeholder=ob)
@@ -381,6 +385,13 @@ def learn(*,
         episodes_so_far += len(lens)
         timesteps_so_far += sum(lens)
         iters_so_far += 1
+        if max_mean_ret is None or np.mean(rewbuffer) > max_mean_ret:
+            file = re.split(r'/', save_path)
+            file[-1] = '{}'.format(int(np.mean(rewbuffer))) + '_' + file[-1]
+            file_name = file[0]
+            for _ in file[1:]:
+                file_name += '/' + _
+            save_variables(file_name)
 
         logger.record_tabular("EpisodesSoFar", episodes_so_far)
         logger.record_tabular("TimestepsSoFar", timesteps_so_far)
