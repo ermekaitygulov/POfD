@@ -69,7 +69,7 @@ class RewardShaper(gym.Wrapper):
     def step(self, action):
         new_state, reward, done, info = self.env.step(action)
         if self.old_state is not None:
-            reward = reward + 300 * (0.*99 * abs(new_state[1]) - abs(self.old_state[1]))
+            reward = reward + 300 * (0.99 * abs(new_state[1]) - abs(self.old_state[1]))
         self.old_state = new_state
         return new_state, reward, done, info
 
