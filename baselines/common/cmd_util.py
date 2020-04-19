@@ -28,7 +28,8 @@ def make_vec_env(env_id, env_type, num_env, seed,
                  gamestate=None,
                  initializer=None,
                  force_dummy=False,
-                 log_dir=None):
+                 log_dir=None,
+                 reward_shape=False):
     """
     Create a wrapped, monitored SubprocVecEnv for Atari and MuJoCo.
     """
@@ -50,7 +51,8 @@ def make_vec_env(env_id, env_type, num_env, seed,
             wrapper_kwargs=wrapper_kwargs,
             env_kwargs=env_kwargs,
             logger_dir=logger_dir,
-            initializer=initializer
+            initializer=initializer,
+            reward_shape=reward_shape
         )
 
     set_global_seeds(seed)
@@ -59,8 +61,21 @@ def make_vec_env(env_id, env_type, num_env, seed,
     else:
         return DummyVecEnv([make_thunk(i + start_index, initializer=None) for i in range(num_env)])
 
+class RewardShaper(gym.Wrapper):
+    def __init__(self, env):
+        super().__init__(env)
+        self.old_state = None
 
-def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.0, gamestate=None, flatten_dict_observations=True, wrapper_kwargs=None, env_kwargs=None, logger_dir=None, initializer=None):
+    def step(self, action):
+        new_state, reward, done, info = self.env.step(action)
+        if self.old_state:
+            reward = reward + 300 * (0.*99 * abs(new_state[1]) - abs(self.old_state[1]))
+            self.old_state = new_state
+        return new_state, reward, done, info
+
+def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.0, gamestate=None,
+             flatten_dict_observations=True, wrapper_kwargs=None, env_kwargs=None, logger_dir=None,
+             initializer=None, reward_shape=False):
     if initializer is not None:
         initializer(mpi_rank=mpi_rank, subrank=subrank)
 
@@ -89,7 +104,8 @@ def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.
     env = Monitor(env,
                   logger_dir and os.path.join(logger_dir, str(mpi_rank) + '.' + str(subrank)),
                   allow_early_resets=True)
-
+    if reward_shape:
+        env = RewardShaper(env)
 
     if env_type == 'atari':
         env = wrap_deepmind(env, **wrapper_kwargs)

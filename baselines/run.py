@@ -49,18 +49,6 @@ _game_envs['retro'] = {
     'SpaceInvaders-Snes',
 }
 
-class RewardShaper(gym.Wrapper):
-    def __init__(self, env):
-        super().__init__(env)
-        self.old_state = None
-
-    def step(self, action):
-        new_state, reward, done, info = self.env.step(action)
-        if self.old_state:
-            reward = reward + 300 * (0.*99 * abs(new_state[1]) - abs(self.old_state[1]))
-            self.old_state = new_state
-        return new_state, reward, done, info
-
 def train(args, extra_args):
     env_type, env_id = get_env_type(args)
     print('env_type: {}'.format(env_type))
@@ -73,8 +61,6 @@ def train(args, extra_args):
     alg_kwargs.update(extra_args)
 
     env = build_env(args)
-    if args.reward_shape:
-        env = RewardShaper(env)
     if args.save_video_interval != 0:
         env = VecVideoRecorder(env, osp.join(logger.get_dir(), "videos"), record_video_trigger=lambda x: x % args.save_video_interval == 0, video_length=args.save_video_length)
 
@@ -113,7 +99,8 @@ def build_env(args):
             env = make_env(env_id, env_type, seed=seed)
         else:
             frame_stack_size = 4
-            env = make_vec_env(env_id, env_type, nenv, seed, gamestate=args.gamestate, reward_scale=args.reward_scale)
+            env = make_vec_env(env_id, env_type, nenv, seed, gamestate=args.gamestate, reward_scale=args.reward_scale,
+                               reward_shape=args.reward_shape)
             env = VecFrameStack(env, frame_stack_size)
 
     else:
