@@ -330,7 +330,7 @@ def learn(env,
                     for _ in file[1:]:
                         file_name += '/' + _
                     save_variables(model_file)
-                    act.save_act(file_name)
+                    save_variables(file_name)
                     model_saved = True
                     saved_mean_reward = mean_100ep_reward
         if model_saved:
