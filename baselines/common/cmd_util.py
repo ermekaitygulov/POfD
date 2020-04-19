@@ -70,7 +70,7 @@ class RewardShaper(gym.Wrapper):
         new_state, reward, done, info = self.env.step(action)
         if self.old_state:
             reward = reward + 300 * (0.*99 * abs(new_state[1]) - abs(self.old_state[1]))
-            self.old_state = new_state
+        self.old_state = new_state
         return new_state, reward, done, info
 
 def make_env(env_id, env_type, mpi_rank=0, subrank=0, seed=None, reward_scale=1.0, gamestate=None,
