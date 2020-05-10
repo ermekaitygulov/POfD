@@ -240,6 +240,7 @@ def main(args):
                 print('episode_rew={}'.format(score))
                 scores.append(score)
                 actions.append(np.array(episode_act))
+                print(*[s.shape for s in episode_obs])
                 observations.append(np.array(episode_obs))
                 returns.append(np.array(episode_ret))
                 dones.append(np.array(episode_done))
