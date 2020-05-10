@@ -226,7 +226,7 @@ def main(args):
         score = 0
         steps = 0
         while steps < args.play_steps:
-            action, _, _, _ = model.step(obs)
+            action = model(np.array(obs)[None])
             episode_obs.append(obs)
             episode_act.append(action)
 
