@@ -227,7 +227,7 @@ def main(args):
         steps = 0
         while steps < args.play_steps:
             action = model(np.array(obs)[None])
-            episode_obs.append(obs)
+            episode_obs.append(np.array(obs))
             episode_act.append(action)
 
             obs, rew, done, _ = env.step(action)
@@ -240,7 +240,6 @@ def main(args):
                 print('episode_rew={}'.format(score))
                 scores.append(score)
                 actions.append(np.array(episode_act))
-                print(*[s.shape for s in episode_obs])
                 observations.append(np.array(episode_obs))
                 returns.append(np.array(episode_ret))
                 dones.append(np.array(episode_done))
