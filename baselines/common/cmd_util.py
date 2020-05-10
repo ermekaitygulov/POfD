@@ -188,7 +188,7 @@ def common_arg_parser():
     parser.add_argument('--save_video_interval', help='Save video every x steps (0 = disabled)', default=0, type=int)
     parser.add_argument('--save_video_length', help='Length of recorded video. Default: 200', default=200, type=int)
     parser.add_argument('--play', default=False, action='store_true')
-    parser.add_argument('--play_eps', type=int, default=100, action='store')
+    parser.add_argument('--play_steps', type=int, default=100000, action='store')
     parser.add_argument('--reward_shape', default=False, action='store_true')
     return parser
 

@@ -224,27 +224,27 @@ def main(args):
         scores = list()
         obs = env.reset()
         score = 0
-        for _ in range(args.play_eps):
-            done = False
-            while not done:
-                action, _, _, _ = model.step(obs)
-                episode_obs.append(obs)
-                episode_act.append(action)
+        steps = 0
+        while steps < args.play_steps:
+            action, _, _, _ = model.step(obs)
+            episode_obs.append(obs)
+            episode_act.append(action)
 
-                obs, rew, done, _ = env.step(action)
-                episode_ret.append(rew)
-                episode_done.append(done)
-                score += rew[0] if isinstance(env, VecEnv) else rew
-                done = done.any() if isinstance(done, np.ndarray) else done
-                if done:
-                    print('episode_rew={}'.format(score))
-                    scores.append(score)
-                    actions.append(np.array(episode_act))
-                    observations.append(np.array(episode_obs))
-                    returns.append(np.array(episode_ret))
-                    dones.append(np.array(episode_done))
-                    score = 0
-                    obs = env.reset()
+            obs, rew, done, _ = env.step(action)
+            steps += 1
+            episode_ret.append(rew)
+            episode_done.append(done)
+            score += rew[0] if isinstance(env, VecEnv) else rew
+            done = done.any() if isinstance(done, np.ndarray) else done
+            if done:
+                print('episode_rew={}'.format(score))
+                scores.append(score)
+                actions.append(np.array(episode_act))
+                observations.append(np.array(episode_obs))
+                returns.append(np.array(episode_ret))
+                dones.append(np.array(episode_done))
+                score = 0
+                obs = env.reset()
         avg_rew = sum(scores)/len(scores)
         file = re.split(r'/', extra_args['load_path'])
         file_name = file[0]
