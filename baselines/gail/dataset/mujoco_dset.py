@@ -108,7 +108,7 @@ class Cartpole_Dset(object):
         acs = traj_data['acs'][:traj_limitation]
 
         # Flatten to (N * L, prod(S))
-        self.obs = np.concatenate(obs)
+        self.obs = np.concatenate(obs)[:-1]
         self.obs = np.squeeze(self.obs)
         self.acs = np.concatenate(acs)
 
@@ -120,7 +120,7 @@ class Cartpole_Dset(object):
         assert len(self.obs) == len(self.acs)
         self.num_traj = min(traj_limitation, len(traj_data['obs']))
         self.num_transition = len(self.obs)
-        self.randomize = randomize
+        self.randomize = randomizetraj_data = np.load(expert_path, allow_pickle=True)
         self.dset = Dset(self.obs, self.acs, self.randomize)
         # for behavior cloning
         self.train_set = Dset(self.obs[:int(self.num_transition*train_fraction), :],
