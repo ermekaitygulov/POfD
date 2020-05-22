@@ -108,12 +108,12 @@ class Cartpole_Dset(object):
         acs = traj_data['acs'][:traj_limitation]
 
         # Flatten to (N * L, prod(S))
-        self.obs = np.vstack(obs)
+        self.obs = np.concatenate(obs)
         self.obs = np.squeeze(self.obs)
-        self.acs = np.vstack(acs)
+        self.acs = np.concatenate(acs)
 
         self.rets = traj_data['rew'][:traj_limitation]
-        self.rets = np.vstack(self.rets)
+        self.rets = np.concatenate(self.rets)
         self.rets = np.squeeze(self.rets)
         self.avg_ret = sum(self.rets)/len(self.rets)
         self.std_ret = np.std(np.array(self.rets))
