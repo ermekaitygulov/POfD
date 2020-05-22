@@ -108,7 +108,8 @@ class Cartpole_Dset(object):
         acs = traj_data['acs'][:traj_limitation]
 
         # Flatten to (N * L, prod(S))
-        self.obs = np.concatenate(obs)[:-1]
+        obs = [o[:-1] for o in obs]
+        self.obs = np.concatenate(obs)
         self.obs = np.squeeze(self.obs)
         self.acs = np.concatenate(acs)
 
