@@ -117,7 +117,7 @@ class Cartpole_Dset(object):
         self.rets = np.squeeze(self.rets)
         self.avg_ret = sum(self.rets)/len(self.rets)
         self.std_ret = np.std(np.array(self.rets))
-        assert len(self.obs) == len(self.acs)
+        assert len(self.obs) == len(self.acs), (self.obs.shape, self.acs.shape)
         self.num_traj = min(traj_limitation, len(traj_data['obs']))
         self.num_transition = len(self.obs)
         self.randomize = randomizetraj_data = np.load(expert_path, allow_pickle=True)
