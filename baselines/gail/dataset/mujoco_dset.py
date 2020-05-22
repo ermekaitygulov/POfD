@@ -113,7 +113,7 @@ class Cartpole_Dset(object):
         self.obs = np.squeeze(self.obs)
         self.acs = np.concatenate(acs)
         if len(self.acs.shape) < 2:
-            self.acs = np.expand_dims(acs, axis=-1)
+            self.acs = np.expand_dims(self.acs, axis=-1)
 
 
         self.rets = traj_data['rew'][:traj_limitation]
