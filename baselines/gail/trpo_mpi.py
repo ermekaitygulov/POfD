@@ -382,10 +382,7 @@ def learn(env, eval_env, policy_func, reward_giver, expert_dataset, rank,
                         g = allmean(compute_vflossandgrad(mbob, mbret))
                         vfadam.update(g, vf_stepsize)
 
-        # evaluate current policy
-        if (epoch + 1) % eval_interval == 0:
-            total_samples = (epoch + 1) * timesteps_per_batch * g_step
-            evaluate_policy(pi, reward_giver, eval_env, total_samples, tstart)
+
 
         # ------------------ Update D ------------------
         logger.log("Optimizing Discriminator...")
