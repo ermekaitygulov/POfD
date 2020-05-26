@@ -11,6 +11,8 @@ from tqdm import tqdm
 import numpy as np
 import gym
 import wandb
+
+from baselines.common.atari_wrappers import FrameStack
 from baselines.gail import mlp_policy
 from baselines.common import set_global_seeds, tf_util as U
 from baselines.common.misc_util import boolean_flag
@@ -77,10 +79,34 @@ def get_task_name(args):
     return task_name
 
 
+class FrameSkip(gym.Wrapper):
+    """Return every `skip`-th frame and repeat given action during skip.
+    Note that this wrapper does not "maximize" over the skipped frames.
+    """
+    def __init__(self, env, skip=4):
+        super(FrameSkip, self).__init__(env)
+
+        self._skip = skip
+
+    def step(self, action):
+        total_reward = 0.0
+        obs, done, info = None, None, None
+        for _ in range(self._skip):
+            _, reward, done, info = self.env.step(action)
+            total_reward += reward
+            if done:
+                break
+        obs = self.env.render()
+        return obs, total_reward, done, info
+
+
 def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
     env = gym.make(args.env)
+    if args.env == 'CarRacing-v0':
+        env = FrameSkip(env, 4)
+        env = FrameStack(env, 4)
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env,
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
