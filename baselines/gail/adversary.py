@@ -69,7 +69,7 @@ class TransitionClassifier(object):
                 self.obs_rms = RunningMeanStd(shape=self.observation_shape)
             obs = (obs_ph - self.obs_rms.mean) / self.obs_rms.std
             if len(self.obs_rms.shape) > 2:
-                cnn = get_network_builder('unscale_cnn')
+                cnn = get_network_builder('unscale_cnn')()
                 last_out = cnn(obs)
             else:
                 last_out = obs
