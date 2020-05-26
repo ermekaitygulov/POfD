@@ -36,8 +36,9 @@ class MlpPolicy(object):
 
         obz = tf.clip_by_value((ob - self.ob_rms.mean) / self.ob_rms.std, -5.0, 5.0)
         if len(ob_space.shape) > 2:
-            cnn = get_network_builder('unscale_cnn')()
-            last_out = cnn(obz)
+            with tf.variable_scope("vfcnn"):
+                cnn = get_network_builder('unscale_cnn')()
+                last_out = cnn(obz)
         else:
             last_out = obz
         for i in range(num_hid_layers):
@@ -45,8 +46,9 @@ class MlpPolicy(object):
         self.vpred = dense(last_out, 1, "vffinal", weight_init=U.normc_initializer(1.0))[:, 0]
 
         if len(ob_space.shape) > 2:
-            cnn = get_network_builder('unscale_cnn')()
-            last_out = cnn(obz)
+            with tf.variable_scope("polcnn"):
+                cnn = get_network_builder('unscale_cnn')()
+                last_out = cnn(obz)
         else:
             last_out = obz
         for i in range(num_hid_layers):
