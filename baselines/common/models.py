@@ -25,6 +25,21 @@ def nature_cnn(unscaled_images, **conv_kwargs):
     h3 = conv_to_fc(h3)
     return activ(fc(h3, 'fc1', nh=512, init_scale=np.sqrt(2)))
 
+
+def unscale_nature_cnn(scaled_images, **conv_kwargs):
+    """
+    CNN from Nature paper.
+    """
+    scaled_images = tf.cast(scaled_images, tf.float32)
+    activ = tf.nn.relu
+    h = activ(conv(scaled_images, 'c1', nf=32, rf=8, stride=4, init_scale=np.sqrt(2),
+                   **conv_kwargs))
+    h2 = activ(conv(h, 'c2', nf=64, rf=4, stride=2, init_scale=np.sqrt(2), **conv_kwargs))
+    h3 = activ(conv(h2, 'c3', nf=64, rf=3, stride=1, init_scale=np.sqrt(2), **conv_kwargs))
+    h3 = conv_to_fc(h3)
+    return activ(fc(h3, 'fc1', nh=512, init_scale=np.sqrt(2)))
+
+
 def build_impala_cnn(unscaled_images, depths=[16,32,32], **conv_kwargs):
     """
     Model used in the paper "IMPALA: Scalable Distributed Deep-RL with
@@ -107,6 +122,12 @@ def mlp(num_layers=2, num_hidden=64, activation=tf.tanh, layer_norm=False):
 def cnn(**conv_kwargs):
     def network_fn(X):
         return nature_cnn(X, **conv_kwargs)
+    return network_fn
+
+@register("unscale_cnn")
+def cnn(**conv_kwargs):
+    def network_fn(X):
+        return unscale_nature_cnn(X, **conv_kwargs)
     return network_fn
 
 @register("impala_cnn")
