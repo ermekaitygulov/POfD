@@ -36,7 +36,7 @@ class MlpPolicy(object):
 
         obz = tf.clip_by_value((ob - self.ob_rms.mean) / self.ob_rms.std, -5.0, 5.0)
         if len(ob_space.shape) > 2:
-            with tf.variable_scope("vfcnn"):
+            with tf.variable_scope("vffcnn"):
                 cnn = get_network_builder('unscale_cnn')()
                 last_out = cnn(obz)
         else:
