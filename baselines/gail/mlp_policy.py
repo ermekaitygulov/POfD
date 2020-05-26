@@ -44,7 +44,11 @@ class MlpPolicy(object):
             last_out = tf.nn.tanh(dense(last_out, hid_size, "vffc%i" % (i+1), weight_init=U.normc_initializer(1.0)))
         self.vpred = dense(last_out, 1, "vffinal", weight_init=U.normc_initializer(1.0))[:, 0]
 
-        last_out = obz
+        if len(ob_space.shape) > 2:
+            cnn = get_network_builder('unscale_cnn')()
+            last_out = cnn(obz)
+        else:
+            last_out = obz
         for i in range(num_hid_layers):
             last_out = tf.nn.tanh(dense(last_out, hid_size, "polfc%i" % (i+1), weight_init=U.normc_initializer(1.0)))
 
