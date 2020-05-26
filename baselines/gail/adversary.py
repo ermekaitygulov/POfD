@@ -5,6 +5,7 @@ I follow the architecture from the official repository
 import tensorflow as tf
 import numpy as np
 
+from baselines.common.models import get_network_builder
 from baselines.common.mpi_running_mean_std import RunningMeanStd
 from baselines.common import tf_util as U
 
@@ -67,7 +68,12 @@ class TransitionClassifier(object):
             with tf.variable_scope("obfilter"):
                 self.obs_rms = RunningMeanStd(shape=self.observation_shape)
             obs = (obs_ph - self.obs_rms.mean) / self.obs_rms.std
-            _input = tf.concat([obs, acs_ph], axis=1)  # concatenate the two input -> form a transition
+            if len(self.obs_rms.shape) > 2:
+                cnn = get_network_builder('unscale_cnn')
+                last_out = cnn(obs)
+            else:
+                last_out = obs
+            _input = tf.concat([last_out, acs_ph], axis=1)  # concatenate the two input -> form a transition
             p_h1 = tf.contrib.layers.fully_connected(_input, self.hidden_size, activation_fn=tf.nn.tanh)
             p_h2 = tf.contrib.layers.fully_connected(p_h1, self.hidden_size, activation_fn=tf.nn.tanh)
             logits = tf.contrib.layers.fully_connected(p_h2, 1, activation_fn=tf.identity)
