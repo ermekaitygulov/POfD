@@ -100,6 +100,28 @@ class FrameSkip(gym.Wrapper):
         return obs, total_reward, done, info
 
 
+class DiscreteBase(gym.Wrapper):
+    def __init__(self, env):
+        super(DiscreteBase, self).__init__(env)
+        self.env = env
+        self.action_dict = {}
+        self.action_space = gym.spaces.Discrete(len(self.action_dict))
+
+    def step(self, action):
+        s, r, done, info = self.env.step(self.action_dict[action])
+        return s, r, done, info
+
+    def sample_action(self):
+        return self.action_space.sample()
+
+
+class CarRacingWrapper(DiscreteBase):
+    def __init__(self, env):
+        DiscreteBase.__init__(self, env)
+        self.action_dict = [[0.0, 1.0, 0.0], [1.0, 0.3, 0], [-1.0, 0.3, 0.0], [0.0, 0.0, 0.8]]
+        self.action_space = gym.spaces.Discrete(len(self.action_dict))
+
+
 def main(args):
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(args.seed)
@@ -107,6 +129,7 @@ def main(args):
     if args.env == 'CarRacing-v0':
         env = FrameSkip(env, 4)
         env = FrameStack(env, 4)
+        env = CarRacingWrapper(env)
     args.log_dir = osp.join(args.log_dir, "reward_coeff_" + str(args.reward_coeff), args.env,
                             "seed_" + str(args.seed))
     logger.configure(dir=args.log_dir)
