@@ -69,8 +69,8 @@ class TransitionClassifier(object):
                 self.obs_rms = RunningMeanStd(shape=self.observation_shape)
             obs = (obs_ph - self.obs_rms.mean) / self.obs_rms.std
             if len(self.obs_rms.shape) > 2:
-                cnn = get_network_builder('unscale_cnn')()
-                last_out = cnn(obs)
+                cnn = get_network_builder('cnn')()
+                last_out = cnn(obs_ph)
             else:
                 last_out = obs
             _input = tf.concat([last_out, acs_ph], axis=1)  # concatenate the two input -> form a transition
