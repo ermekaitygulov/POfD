@@ -237,6 +237,7 @@ def main(args):
             score += rew[0] if isinstance(env, VecEnv) else rew
             done = done.any() if isinstance(done, np.ndarray) else done
             if done:
+                episode_obs.append(np.array(obs))
                 print('episode_rew={}'.format(score))
                 scores.append(score)
                 actions.append(np.array(episode_act))
@@ -244,6 +245,10 @@ def main(args):
                 returns.append(np.array(episode_ret))
                 dones.append(np.array(episode_done))
                 score = 0
+                episode_act = list()
+                episode_obs = list()
+                episode_ret = list()
+                episode_done = list()
                 obs = env.reset()
         avg_rew = sum(scores)/len(scores)
         file = re.split(r'/', extra_args['load_path'])
